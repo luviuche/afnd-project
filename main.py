@@ -21,19 +21,53 @@ class AutomataVisualizer:
         print("\n")
 
     # ---------------------------------------------------------
-    # PASO 2: Contemplar nuevos estados (Construcción de subconjuntos)
+    # PASO 2: Contemplar nuevos estados (Algoritmo Dinámico)
     # ---------------------------------------------------------
     def calcular_nuevos_estados(self):
         print("--- Paso 2: Contemplar Nuevos Estados ---")
-        # Aquí se implementa la lógica de buscar a qué conjunto de estados
-        # nos lleva cada transición. Usamos 'frozenset' para agrupar estados
-        # Ejemplo simulado del resultado:
-        self.dfa_transiciones_crudas = {
-            frozenset(['q0']): {'0': frozenset(['q0', 'q1']), '1': frozenset(['q0'])},
-            frozenset(['q0', 'q1']): {'0': frozenset(['q0', 'q1']), '1': frozenset(['q0', 'q2'])},
-            # ... el algoritmo seguiría descubriendo estados ...
-        }
-        print("Nuevos estados (conjuntos) calculados lógicamente.\n")
+
+        # El estado inicial del DFA es el conjunto que contiene al estado inicial del NFA
+        estado_inicial_conjunto = frozenset([self.estado_inicial])
+
+        # Usamos una lista como cola para procesar los nuevos estados que vayamos descubriendo
+        estados_por_procesar = [estado_inicial_conjunto]
+        estados_procesados = set()  # Para no evaluar el mismo estado dos veces
+
+        self.dfa_transiciones_crudas = {}
+
+        while estados_por_procesar:
+            estado_actual = estados_por_procesar.pop(0)
+
+            if estado_actual in estados_procesados:
+                continue
+
+            estados_procesados.add(estado_actual)
+            self.dfa_transiciones_crudas[estado_actual] = {}
+
+            # 1. Encontrar qué símbolos (0, 1, etc.) salen desde los sub-estados actuales
+            simbolos_posibles = set()
+            for sub_estado in estado_actual:
+                if sub_estado in self.nfa_transiciones:
+                    simbolos_posibles.update(self.nfa_transiciones[sub_estado].keys())
+
+            # 2. Calcular hacia dónde nos lleva cada símbolo
+            for simbolo in simbolos_posibles:
+                nuevo_estado_destino = set()
+
+                for sub_estado in estado_actual:
+                    if sub_estado in self.nfa_transiciones and simbolo in self.nfa_transiciones[sub_estado]:
+                        # Unimos todos los destinos alcanzables con este símbolo
+                        nuevo_estado_destino.update(self.nfa_transiciones[sub_estado][simbolo])
+
+                # 3. Si hay destinos, registramos la transición y encolamos el nuevo estado
+                if nuevo_estado_destino:
+                    destino_frozenset = frozenset(nuevo_estado_destino)
+                    self.dfa_transiciones_crudas[estado_actual][simbolo] = destino_frozenset
+
+                    if destino_frozenset not in estados_procesados:
+                        estados_por_procesar.append(destino_frozenset)
+
+        print(f"Se descubrieron {len(self.dfa_transiciones_crudas)} estados en total.\n")
 
     # ---------------------------------------------------------
     # PASO 3: Cambio de variable (Nueva tabla)
