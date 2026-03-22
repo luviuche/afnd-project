@@ -1,16 +1,21 @@
-# This is a sample Python script.
+import pandas as pd
+from graphviz import Digraph
 
-# Press Mayús+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+class AutomataVisualizer:
+    def __init__(self, transiciones, estado_inicial, estados_aceptacion):
+        self.nfa_transiciones = transiciones
+        self.estado_inicial = estado_inicial
+        self.estados_aceptacion = estados_aceptacion
 
+        self.dfa_transiciones_crudas ={}
+        self.mapeo_variables = {}
+        self.dfa_transiciones_final = {}
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # ---------------------------------------------------------
+    # PASO 1: Tabla de transiciones (AFND Original)
+    # ---------------------------------------------------------
+    def mostrar_tabla_original(self):
+        print("--- Paso 1: Tabla de Transiciones (AFND) ---")
+        df = pd.DataFrame(self.nfa_transiciones).fillna('-')
+        print(df.T)
+        print("\n")
