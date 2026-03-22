@@ -128,15 +128,8 @@ class AutomataVisualizer:
     # PASO 5: Evaluar caminos y eliminar estados muertos
     # ---------------------------------------------------------
     def evaluar_y_limpiar_caminos(self):
-        print("--- Paso 5: Evaluar caminos y eliminar estados muertos ---")
-
-        # 1. Recuperar cuáles son los estados de aceptación del DFA
-        dfa_estados_aceptacion = set()
-        for conjunto_original, nueva_letra in self.mapeo_variables.items():
-            if any(estado in self.estados_aceptacion for estado in conjunto_original):
-                dfa_estados_aceptacion.add(nueva_letra)
-
-        # 2. Identificar "estados vivos" (los que pueden llegar a una aceptación)
+        print("--- Paso 5: Evaluar caminos y optimizar ---")
+        dfa_estados_aceptacion = self._obtener_estados_aceptacion_dfa()
         estados_vivos = set(dfa_estados_aceptacion)
         hubo_cambios = True
 
@@ -144,40 +137,27 @@ class AutomataVisualizer:
             hubo_cambios = False
             for origen, trans in self.dfa_transiciones_final.items():
                 if origen not in estados_vivos:
-                    # Si alguna de sus transiciones lleva a un estado vivo, este también está vivo
-                    for simbolo, destino in trans.items():
-                        if destino in estados_vivos:
-                            estados_vivos.add(origen)
-                            hubo_cambios = True
-                            break  # Ya sabemos que este estado sobrevive
+                    if any(destino in estados_vivos for destino in trans.values()):
+                        estados_vivos.add(origen)
+                        hubo_cambios = True
 
-        # 3. Eliminar los estados que no están "vivos"
-        estados_eliminados = []
         estados_actuales = list(self.dfa_transiciones_final.keys())
+        estados_eliminados = [e for e in estados_actuales if e not in estados_vivos]
 
-        for estado in estados_actuales:
-            if estado not in estados_vivos:
-                estados_eliminados.append(estado)
-                del self.dfa_transiciones_final[estado]
+        # Eliminar estados y limpiar transiciones
+        for estado in estados_eliminados:
+            del self.dfa_transiciones_final[estado]
 
-        # 4. Limpiar las flechas (transiciones) que apuntaban a los estados eliminados
         for origen in self.dfa_transiciones_final:
-            transiciones_a_borrar = [
-                simbolo for simbolo, destino in self.dfa_transiciones_final[origen].items()
-                if destino not in estados_vivos
-            ]
-            for simbolo in transiciones_a_borrar:
-                del self.dfa_transiciones_final[origen][simbolo]
+            a_borrar = [s for s, d in self.dfa_transiciones_final[origen].items() if d not in estados_vivos]
+            for s in a_borrar: del self.dfa_transiciones_final[origen][s]
 
-        # 5. Resultados
         if estados_eliminados:
-            print(f"Se eliminaron los siguientes estados muertos/trampa: {estados_eliminados}")
-            print("Generando nuevo gráfico limpio...")
+            print(f"-> Se eliminaron los estados trampa/inalcanzables: {estados_eliminados}\n")
+            self._imprimir_tabla(self.dfa_transiciones_final, "Tabla Final Optimizada (Sin trampas)")
             self.pintar_automata('automata_dfa_limpio')
         else:
-            print("Todos los estados actuales son válidos y pueden llegar a un estado de aceptación.")
-            print("No fue necesario eliminar ningún estado.\n")
-
+            print("-> El autómata ya es óptimo. No hay estados muertos.\n")
 
 # === EJECUCIÓN DEL PROGRAMA ===
 if __name__ == "__main__":
