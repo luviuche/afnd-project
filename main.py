@@ -159,25 +159,19 @@ class AutomataVisualizer:
         else:
             print("-> El autómata ya es óptimo. No hay estados muertos.\n")
 
+
 # === EJECUCIÓN DEL PROGRAMA ===
 if __name__ == "__main__":
-    # NFA con un estado trampa (q3)
     transiciones_nfa_trampa = {
         'q0': {'0': ['q0', 'q1'], '1': ['q3']},
         'q1': {'1': ['q2']},
         'q2': {'0': ['q2'], '1': ['q2']},
-        'q3': {'0': ['q3'], '1': ['q3']}  # ¡El pozo sin fondo!
+        'q3': {'0': ['q3'], '1': ['q3']}
     }
 
-    # Instanciamos el programa con el nuevo diccionario
     programa = AutomataVisualizer(transiciones_nfa_trampa, 'q0', ['q2'])
-
     programa.mostrar_tabla_original()
     programa.calcular_nuevos_estados()
     programa.cambio_de_variable()
-
-    # Pintamos el autómata inicial (verás un estado que no lleva a nada)
     programa.pintar_automata('automata_con_trampa')
-
-    # Evaluamos y limpiamos (debería eliminar el estado trampa y generar un nuevo gráfico)
     programa.evaluar_y_limpiar_caminos()
