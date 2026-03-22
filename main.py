@@ -102,12 +102,21 @@ class AutomataVisualizer:
     def pintar_automata(self, nombre_archivo='automata_dfa'):
         print("--- Paso 4: Pintando el autómata ---")
         dot = Digraph(comment='Autómata')
-        dot.attr(rankdir='LR') # De izquierda a derecha
+        dot.attr(rankdir='LR')  # De izquierda a derecha
 
-        # Añadir estados y flechas
+        # 1. Identificar qué nuevas variables (A, B, C...) son de aceptación
+        # Un estado es de aceptación si contiene al menos un estado de aceptación del NFA original
+        dfa_estados_aceptacion = set()
+        for conjunto_original, nueva_letra in self.mapeo_variables.items():
+            if any(estado in self.estados_aceptacion for estado in conjunto_original):
+                dfa_estados_aceptacion.add(nueva_letra)
+
+        # 2. Añadir estados y flechas
         for origen, trans in self.dfa_transiciones_final.items():
-            # Aquí podrías agregar lógica para saber si 'origen' es de aceptación (doble círculo)
-            dot.node(origen, origen, shape='circle')
+            # Asignar doble círculo si está en nuestra lista de aceptación
+            forma = 'doublecircle' if origen in dfa_estados_aceptacion else 'circle'
+            dot.node(origen, origen, shape=forma)
+
             for simbolo, destino in trans.items():
                 dot.edge(origen, destino, label=simbolo)
 
@@ -118,6 +127,7 @@ class AutomataVisualizer:
             dot.edge('', primer_estado)
 
         dot.render(nombre_archivo, format='png', view=True)
+        print(f"Estados de aceptación detectados automáticamente: {dfa_estados_aceptacion}")
         print(f"Gráfico guardado y abierto como {nombre_archivo}.png\n")
 
     # ---------------------------------------------------------
