@@ -159,6 +159,54 @@ class AutomataVisualizer:
         else:
             print("-> El autómata ya es óptimo. No hay estados muertos.\n")
 
+    # ---------------------------------------------------------
+    # PASO EXTRA: Evaluar cadenas en el AFD limpio
+    # ---------------------------------------------------------
+    def evaluar_cadena(self, cadena):
+        print(f"--- Evaluando la cadena: '{cadena}' ---")
+
+        # 1. Encontrar cuál es el estado inicial del AFD
+        estado_actual = None
+        for conjunto, letra in self.mapeo_variables.items():
+            if self.estado_inicial in conjunto:
+                estado_actual = letra
+                break
+
+        # Validar que el autómata no haya quedado completamente vacío
+        if not estado_actual or estado_actual not in self.dfa_transiciones_final:
+            print("Error: El autómata no tiene un estado inicial válido para iniciar.\n")
+            return False
+
+        camino = [f"[{estado_actual}]"]
+
+        # 2. Recorrer la cadena símbolo por símbolo
+        for simbolo in cadena:
+            if simbolo not in self.alfabeto:
+                print(f"Rechazada ❌: El símbolo '{simbolo}' no pertenece al alfabeto {self.alfabeto}.")
+                return False
+
+            transiciones_estado = self.dfa_transiciones_final.get(estado_actual, {})
+
+            if simbolo in transiciones_estado:
+                estado_actual = transiciones_estado[simbolo]
+                camino.append(f"--({simbolo})--> [{estado_actual}]")
+            else:
+                camino.append(f"--({simbolo})--> [X Muro/Trampa X]")
+                print(f"Ruta: {' '.join(camino)}")
+                print(f"Resultado: CADENA RECHAZADA ❌ (Se cortó el camino en '{simbolo}')\n")
+                return False
+
+        # 3. Verificar si el estado en el que terminó es de aceptación
+        print(f"Ruta: {' '.join(camino)}")
+        estados_aceptacion = self._obtener_estados_aceptacion_dfa()
+
+        if estado_actual in estados_aceptacion:
+            print("Resultado: CADENA ACEPTADA ✅\n")
+            return True
+        else:
+            print(f"Resultado: CADENA RECHAZADA ❌ (Terminó en [{estado_actual}], que no es de aceptación)\n")
+            return False
+
 
 # === EJECUCIÓN DEL PROGRAMA ===
 if __name__ == "__main__":
@@ -175,3 +223,16 @@ if __name__ == "__main__":
     programa.cambio_de_variable()
     programa.pintar_automata('automata_con_trampa')
     programa.evaluar_y_limpiar_caminos()
+
+    # --- PRUEBAS DE CADENAS PARA EL PROFESOR ---
+    # 1. Una cadena válida que debería llegar a 'D' (Aceptada)
+    programa.evaluar_cadena("01")
+
+    # 2. Una cadena válida más larga que se queda ciclando en la aceptación (Aceptada)
+    programa.evaluar_cadena("01010")
+
+    # 3. Una cadena que intenta ir por la ruta eliminada (Rechazada)
+    programa.evaluar_cadena("10")
+
+    # 4. Una cadena que se queda a la mitad (Rechazada)
+    programa.evaluar_cadena("0")
