@@ -35,10 +35,7 @@ class AutomataVisualizer:
     # PASO 1: Tabla de transiciones (AFND Original)
     # ---------------------------------------------------------
     def mostrar_tabla_original(self):
-        print("--- Paso 1: Tabla de Transiciones (AFND) ---")
-        df = pd.DataFrame(self.nfa_transiciones).fillna('-')
-        print(df.T)
-        print("\n")
+        self._imprimir_tabla(self.nfa_transiciones, "Paso 1: Tabla de Transiciones (AFND)")
 
     # ---------------------------------------------------------
     # PASO 2: Contemplar nuevos estados (Algoritmo Dinámico)
