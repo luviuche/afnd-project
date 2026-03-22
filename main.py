@@ -19,3 +19,18 @@ class AutomataVisualizer:
         df = pd.DataFrame(self.nfa_transiciones).fillna('-')
         print(df.T)
         print("\n")
+
+    # ---------------------------------------------------------
+    # PASO 2: Contemplar nuevos estados (Construcción de subconjuntos)
+    # ---------------------------------------------------------
+    def calcular_nuevos_estados(self):
+        print("--- Paso 2: Contemplar Nuevos Estados ---")
+        # Aquí se implementa la lógica de buscar a qué conjunto de estados
+        # nos lleva cada transición. Usamos 'frozenset' para agrupar estados
+        # Ejemplo simulado del resultado:
+        self.dfa_transiciones_crudas = {
+            frozenset(['q0']): {'0': frozenset(['q0', 'q1']), '1': frozenset(['q0'])},
+            frozenset(['q0', 'q1']): {'0': frozenset(['q0', 'q1']), '1': frozenset(['q0', 'q2'])},
+            # ... el algoritmo seguiría descubriendo estados ...
+        }
+        print("Nuevos estados (conjuntos) calculados lógicamente.\n")
