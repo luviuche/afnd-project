@@ -7,9 +7,29 @@ class AutomataVisualizer:
         self.estado_inicial = estado_inicial
         self.estados_aceptacion = estados_aceptacion
 
+        # Extraer el alfabeto dinámicamente (ej. '0', '1')
+        self.alfabeto = set()
+        for estado, trans in self.nfa_transiciones.items():
+            self.alfabeto.update(trans.keys())
+        self.alfabeto = sorted(list(self.alfabeto))
+
         self.dfa_transiciones_crudas ={}
         self.mapeo_variables = {}
         self.dfa_transiciones_final = {}
+
+    # --- METODO AYUDANTE ---
+    def _imprimir_tabla(self, diccionario_transiciones, titulo):
+        print(f"--- {titulo} ---")
+        if not diccionario_transiciones:
+            print("La tabla está vacía.\n")
+            return
+
+        # Crear DataFrame, transponerlo (estados como filas) y rellenar nulos
+        df = pd.DataFrame(diccionario_transiciones).T
+        # Asegurar que todas las columnas del alfabeto existan y ordenarlas
+        df = df.reindex(columns=self.alfabeto).fillna('-')
+        print(df)
+        print("\n")
 
     # ---------------------------------------------------------
     # PASO 1: Tabla de transiciones (AFND Original)
@@ -187,17 +207,23 @@ class AutomataVisualizer:
 
 # === EJECUCIÓN DEL PROGRAMA ===
 if __name__ == "__main__":
-    # Definimos un AFND de ejemplo (diccionario de diccionarios)
-    transiciones_nfa = {
-        'q0': {'0': ['q0', 'q1'], '1': ['q0']},
+    # NFA con un estado trampa (q3)
+    transiciones_nfa_trampa = {
+        'q0': {'0': ['q0', 'q1'], '1': ['q3']},
         'q1': {'1': ['q2']},
-        'q2': {'0': ['q2'], '1': ['q2']}
+        'q2': {'0': ['q2'], '1': ['q2']},
+        'q3': {'0': ['q3'], '1': ['q3']}  # ¡El pozo sin fondo!
     }
 
-    programa = AutomataVisualizer(transiciones_nfa, 'q0', ['q2'])
+    # Instanciamos el programa con el nuevo diccionario
+    programa = AutomataVisualizer(transiciones_nfa_trampa, 'q0', ['q2'])
 
     programa.mostrar_tabla_original()
     programa.calcular_nuevos_estados()
     programa.cambio_de_variable()
-    programa.pintar_automata()
+
+    # Pintamos el autómata inicial (verás un estado que no lleva a nada)
+    programa.pintar_automata('automata_con_trampa')
+
+    # Evaluamos y limpiamos (debería eliminar el estado trampa y generar un nuevo gráfico)
     programa.evaluar_y_limpiar_caminos()
