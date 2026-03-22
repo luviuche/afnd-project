@@ -95,35 +95,34 @@ class AutomataVisualizer:
     # PASO 4: Pintar los autómatas
     # ---------------------------------------------------------
     def pintar_automata(self, nombre_archivo='automata_dfa'):
-        print("--- Paso 4: Pintando el autómata ---")
-        dot = Digraph(comment='Autómata')
-        dot.attr(rankdir='LR')  # De izquierda a derecha
+        print(f"--- Pintando el autómata: {nombre_archivo} ---")
+        dot = Digraph(comment='Autómata', format='png')
+        dot.attr(rankdir='LR')
+        dot.attr('node', fontname='Helvetica')  # Estilo de fuente más limpio
 
-        # 1. Identificar qué nuevas variables (A, B, C...) son de aceptación
-        # Un estado es de aceptación si contiene al menos un estado de aceptación del NFA original
-        dfa_estados_aceptacion = set()
-        for conjunto_original, nueva_letra in self.mapeo_variables.items():
-            if any(estado in self.estados_aceptacion for estado in conjunto_original):
-                dfa_estados_aceptacion.add(nueva_letra)
+        dfa_estados_aceptacion = self._obtener_estados_aceptacion_dfa()
 
-        # 2. Añadir estados y flechas
         for origen, trans in self.dfa_transiciones_final.items():
-            # Asignar doble círculo si está en nuestra lista de aceptación
             forma = 'doublecircle' if origen in dfa_estados_aceptacion else 'circle'
             dot.node(origen, origen, shape=forma)
-
             for simbolo, destino in trans.items():
                 dot.edge(origen, destino, label=simbolo)
 
-        # Estado inicial invisible apuntando al inicio
         dot.node('', '', shape='none')
-        primer_estado = list(self.dfa_transiciones_final.keys())[0] if self.dfa_transiciones_final else ''
-        if primer_estado:
+        if self.dfa_transiciones_final:
+            primer_estado = list(self.dfa_transiciones_final.keys())[0]
             dot.edge('', primer_estado)
 
-        dot.render(nombre_archivo, format='png', view=True)
-        print(f"Estados de aceptación detectados automáticamente: {dfa_estados_aceptacion}")
-        print(f"Gráfico guardado y abierto como {nombre_archivo}.png\n")
+        dot.render(nombre_archivo, view=True)
+        print(f"Gráfico generado con éxito.\n")
+
+    # --- METODO AYUDANTE ---
+    def _obtener_estados_aceptacion_dfa(self):
+        aceptacion = set()
+        for conjunto, letra in self.mapeo_variables.items():
+            if any(est in self.estados_aceptacion for est in conjunto):
+                aceptacion.add(letra)
+        return aceptacion
 
     # ---------------------------------------------------------
     # PASO 5: Evaluar caminos y eliminar estados muertos
