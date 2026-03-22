@@ -42,41 +42,24 @@ class AutomataVisualizer:
     # ---------------------------------------------------------
     def calcular_nuevos_estados(self):
         print("--- Paso 2: Contemplar Nuevos Estados ---")
-
-        # El estado inicial del DFA es el conjunto que contiene al estado inicial del NFA
         estado_inicial_conjunto = frozenset([self.estado_inicial])
-
-        # Usamos una lista como cola para procesar los nuevos estados que vayamos descubriendo
         estados_por_procesar = [estado_inicial_conjunto]
-        estados_procesados = set()  # Para no evaluar el mismo estado dos veces
-
+        estados_procesados = set()
         self.dfa_transiciones_crudas = {}
 
         while estados_por_procesar:
             estado_actual = estados_por_procesar.pop(0)
-
-            if estado_actual in estados_procesados:
-                continue
+            if estado_actual in estados_procesados: continue
 
             estados_procesados.add(estado_actual)
             self.dfa_transiciones_crudas[estado_actual] = {}
 
-            # 1. Encontrar qué símbolos (0, 1, etc.) salen desde los sub-estados actuales
-            simbolos_posibles = set()
-            for sub_estado in estado_actual:
-                if sub_estado in self.nfa_transiciones:
-                    simbolos_posibles.update(self.nfa_transiciones[sub_estado].keys())
-
-            # 2. Calcular hacia dónde nos lleva cada símbolo
-            for simbolo in simbolos_posibles:
+            for simbolo in self.alfabeto:
                 nuevo_estado_destino = set()
-
                 for sub_estado in estado_actual:
                     if sub_estado in self.nfa_transiciones and simbolo in self.nfa_transiciones[sub_estado]:
-                        # Unimos todos los destinos alcanzables con este símbolo
                         nuevo_estado_destino.update(self.nfa_transiciones[sub_estado][simbolo])
 
-                # 3. Si hay destinos, registramos la transición y encolamos el nuevo estado
                 if nuevo_estado_destino:
                     destino_frozenset = frozenset(nuevo_estado_destino)
                     self.dfa_transiciones_crudas[estado_actual][simbolo] = destino_frozenset
