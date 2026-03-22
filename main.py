@@ -94,3 +94,21 @@ class AutomataVisualizer:
         # Aquí va el algoritmo de búsqueda (DFS o BFS) desde el estado inicial.
         # Todo estado que no sea visitado, se elimina del diccionario self.dfa_transiciones_final.
         print("Evaluación completada: Estados inalcanzables removidos.\n")
+
+
+# === EJECUCIÓN DEL PROGRAMA ===
+if __name__ == "__main__":
+    # Definimos un AFND de ejemplo (diccionario de diccionarios)
+    transiciones_nfa = {
+        'q0': {'0': ['q0', 'q1'], '1': ['q0']},
+        'q1': {'1': ['q2']},
+        'q2': {'0': ['q2'], '1': ['q2']}
+    }
+
+    programa = AutomataVisualizer(transiciones_nfa, 'q0', ['q2'])
+
+    programa.mostrar_tabla_original()
+    programa.calcular_nuevos_estados()
+    programa.cambio_de_variable()
+    programa.pintar_automata()
+    programa.evaluar_y_limpiar_caminos()
