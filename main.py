@@ -34,3 +34,30 @@ class AutomataVisualizer:
             # ... el algoritmo seguiría descubriendo estados ...
         }
         print("Nuevos estados (conjuntos) calculados lógicamente.\n")
+
+    # ---------------------------------------------------------
+    # PASO 3: Cambio de variable (Nueva tabla)
+    # ---------------------------------------------------------
+    def cambio_de_variable(self):
+        print("--- Paso 3: Cambio de Variable (Nueva Tabla) ---")
+        letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+        # Asignar una nueva letra a cada conjunto de estados descubierto
+        for idx, conjunto in enumerate(self.dfa_transiciones_crudas.keys()):
+            nueva_variable = letras[idx]
+            self.mapeo_variables[conjunto] = nueva_variable
+
+        # Construir la nueva tabla con las letras
+        for estado_origen, trans in self.dfa_transiciones_crudas.items():
+            origen_var = self.mapeo_variables[estado_origen]
+            self.dfa_transiciones_final[origen_var] = {}
+            for simbolo, estado_destino in trans.items():
+                if estado_destino in self.mapeo_variables:
+                    destino_var = self.mapeo_variables[estado_destino]
+                    self.dfa_transiciones_final[origen_var][simbolo] = destino_var
+
+        df_nuevo = pd.DataFrame(self.dfa_transiciones_final).fillna('-')
+        print("Mapeo:", {str(list(k)): v for k, v in self.mapeo_variables.items()})
+        print("\nNueva Tabla (AFD):")
+        print(df_nuevo.T)
+        print("\n")
