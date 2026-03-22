@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a385c5a-e887-4502-bf67-a10d916f8344" name="Changes" comment="Crea el método de cambio de variable (nueva tabla)">
+    <list default="true" id="4a385c5a-e887-4502-bf67-a10d916f8344" name="Changes" comment="Crea el método para pintar los autómatas">
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -82,7 +82,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774143700217</updated>
-      <workItem from="1774143701227" duration="1777000" />
+      <workItem from="1774143701227" duration="1862000" />
     </task>
     <task id="LOCAL-00001" summary="Commit inicial">
       <option name="closed" value="true" />
@@ -116,7 +116,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774147219051</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Crea el método para pintar los autómatas">
+      <option name="closed" value="true" />
+      <created>1774147283159</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1774147283159</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -127,6 +135,7 @@
     <MESSAGE value="Crea el método de creación de la tabla de transiciones" />
     <MESSAGE value="Crea el método de contemplar nuevos estados (construcción de subconjuntos)" />
     <MESSAGE value="Crea el método de cambio de variable (nueva tabla)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Crea el método de cambio de variable (nueva tabla)" />
+    <MESSAGE value="Crea el método para pintar los autómatas" />
+    <option name="LAST_COMMIT_MESSAGE" value="Crea el método para pintar los autómatas" />
   </component>
 </project>

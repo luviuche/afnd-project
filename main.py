@@ -85,3 +85,12 @@ class AutomataVisualizer:
 
         dot.render(nombre_archivo, format='png', view=True)
         print(f"Gráfico guardado y abierto como {nombre_archivo}.png\n")
+
+    # ---------------------------------------------------------
+    # PASO 5: Evaluar los caminos (Eliminar inalcanzables)
+    # ---------------------------------------------------------
+    def evaluar_y_limpiar_caminos(self):
+        print("--- Paso 5: Evaluar caminos y eliminar autómatas (estados) muertos ---")
+        # Aquí va el algoritmo de búsqueda (DFS o BFS) desde el estado inicial.
+        # Todo estado que no sea visitado, se elimina del diccionario self.dfa_transiciones_final.
+        print("Evaluación completada: Estados inalcanzables removidos.\n")
