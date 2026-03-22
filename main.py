@@ -131,13 +131,58 @@ class AutomataVisualizer:
         print(f"Gráfico guardado y abierto como {nombre_archivo}.png\n")
 
     # ---------------------------------------------------------
-    # PASO 5: Evaluar los caminos (Eliminar inalcanzables)
+    # PASO 5: Evaluar caminos y eliminar estados muertos
     # ---------------------------------------------------------
     def evaluar_y_limpiar_caminos(self):
-        print("--- Paso 5: Evaluar caminos y eliminar autómatas (estados) muertos ---")
-        # Aquí va el algoritmo de búsqueda (DFS o BFS) desde el estado inicial.
-        # Todo estado que no sea visitado, se elimina del diccionario self.dfa_transiciones_final.
-        print("Evaluación completada: Estados inalcanzables removidos.\n")
+        print("--- Paso 5: Evaluar caminos y eliminar estados muertos ---")
+
+        # 1. Recuperar cuáles son los estados de aceptación del DFA
+        dfa_estados_aceptacion = set()
+        for conjunto_original, nueva_letra in self.mapeo_variables.items():
+            if any(estado in self.estados_aceptacion for estado in conjunto_original):
+                dfa_estados_aceptacion.add(nueva_letra)
+
+        # 2. Identificar "estados vivos" (los que pueden llegar a una aceptación)
+        estados_vivos = set(dfa_estados_aceptacion)
+        hubo_cambios = True
+
+        while hubo_cambios:
+            hubo_cambios = False
+            for origen, trans in self.dfa_transiciones_final.items():
+                if origen not in estados_vivos:
+                    # Si alguna de sus transiciones lleva a un estado vivo, este también está vivo
+                    for simbolo, destino in trans.items():
+                        if destino in estados_vivos:
+                            estados_vivos.add(origen)
+                            hubo_cambios = True
+                            break  # Ya sabemos que este estado sobrevive
+
+        # 3. Eliminar los estados que no están "vivos"
+        estados_eliminados = []
+        estados_actuales = list(self.dfa_transiciones_final.keys())
+
+        for estado in estados_actuales:
+            if estado not in estados_vivos:
+                estados_eliminados.append(estado)
+                del self.dfa_transiciones_final[estado]
+
+        # 4. Limpiar las flechas (transiciones) que apuntaban a los estados eliminados
+        for origen in self.dfa_transiciones_final:
+            transiciones_a_borrar = [
+                simbolo for simbolo, destino in self.dfa_transiciones_final[origen].items()
+                if destino not in estados_vivos
+            ]
+            for simbolo in transiciones_a_borrar:
+                del self.dfa_transiciones_final[origen][simbolo]
+
+        # 5. Resultados
+        if estados_eliminados:
+            print(f"Se eliminaron los siguientes estados muertos/trampa: {estados_eliminados}")
+            print("Generando nuevo gráfico limpio...")
+            self.pintar_automata('automata_dfa_limpio')
+        else:
+            print("Todos los estados actuales son válidos y pueden llegar a un estado de aceptación.")
+            print("No fue necesario eliminar ningún estado.\n")
 
 
 # === EJECUCIÓN DEL PROGRAMA ===
