@@ -61,3 +61,27 @@ class AutomataVisualizer:
         print("\nNueva Tabla (AFD):")
         print(df_nuevo.T)
         print("\n")
+
+    # ---------------------------------------------------------
+    # PASO 4: Pintar los autómatas
+    # ---------------------------------------------------------
+    def pintar_automata(self, nombre_archivo='automata_dfa'):
+        print("--- Paso 4: Pintando el autómata ---")
+        dot = Digraph(comment='Autómata')
+        dot.attr(rankdir='LR') # De izquierda a derecha
+
+        # Añadir estados y flechas
+        for origen, trans in self.dfa_transiciones_final.items():
+            # Aquí podrías agregar lógica para saber si 'origen' es de aceptación (doble círculo)
+            dot.node(origen, origen, shape='circle')
+            for simbolo, destino in trans.items():
+                dot.edge(origen, destino, label=simbolo)
+
+        # Estado inicial invisible apuntando al inicio
+        dot.node('', '', shape='none')
+        primer_estado = list(self.dfa_transiciones_final.keys())[0] if self.dfa_transiciones_final else ''
+        if primer_estado:
+            dot.edge('', primer_estado)
+
+        dot.render(nombre_archivo, format='png', view=True)
+        print(f"Gráfico guardado y abierto como {nombre_archivo}.png\n")
