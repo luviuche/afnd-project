@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a385c5a-e887-4502-bf67-a10d916f8344" name="Changes" comment="Actualiza el paso 1 de tabla de transiciones">
+    <list default="true" id="4a385c5a-e887-4502-bf67-a10d916f8344" name="Changes" comment="Actualiza el paso 2 optimizando código">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -86,7 +86,7 @@
       <option name="presentableId" value="Default" />
       <updated>1774143700217</updated>
       <workItem from="1774143701227" duration="2077000" />
-      <workItem from="1774213014410" duration="2853000" />
+      <workItem from="1774213014410" duration="2923000" />
     </task>
     <task id="LOCAL-00001" summary="Commit inicial">
       <option name="closed" value="true" />
@@ -184,7 +184,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774218788974</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Actualiza el paso 2 optimizando código">
+      <option name="closed" value="true" />
+      <created>1774218954155</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1774218954155</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -203,7 +211,8 @@
     <MESSAGE value="Actualiza el paso 5 para evaluar caminos y eliminar estados muertos" />
     <MESSAGE value="Crea un nuevo método para imprimir tablas" />
     <MESSAGE value="Actualiza el paso 1 de tabla de transiciones" />
-    <option name="LAST_COMMIT_MESSAGE" value="Actualiza el paso 1 de tabla de transiciones" />
+    <MESSAGE value="Actualiza el paso 2 optimizando código" />
+    <option name="LAST_COMMIT_MESSAGE" value="Actualiza el paso 2 optimizando código" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/afnd_project$main.coverage" NAME="main Coverage Results" MODIFIED="1774214596260" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
