@@ -208,31 +208,68 @@ class AutomataVisualizer:
             return False
 
 
+def construir_automata_interactivo():
+    print("=" * 50)
+    print(" 🤖 CREADOR DE AUTÓMATAS (AFND -> AFD) 🤖 ")
+    print("=" * 50)
+
+    # 1. Pedir el alfabeto
+    entrada_alfabeto = input("1. Ingrese el alfabeto separado por comas (ej: 0,1 o a,b): ")
+    alfabeto = [s.strip() for s in entrada_alfabeto.split(",")]
+
+    # 2. Pedir los estados
+    entrada_estados = input("2. Ingrese todos los estados separados por comas (ej: q0,q1,q2): ")
+    estados = [e.strip() for e in entrada_estados.split(",")]
+
+    # 3. Pedir el estado inicial y los de aceptación
+    estado_inicial = input(f"3. Ingrese el estado inicial (debe ser uno de {estados}): ").strip()
+    entrada_aceptacion = input("4. Ingrese los estados de aceptación separados por comas: ")
+    estados_aceptacion = [e.strip() for e in entrada_aceptacion.split(",")]
+
+    # 4. Construir las transiciones dinámicamente
+    print("\n--- DEFINIENDO TRANSICIONES ---")
+    print("Escriba los estados destino separados por comas (ej: q0,q1).")
+    print("Si no hay transición para un símbolo, simplemente presione ENTER.")
+
+    transiciones_nfa = {}
+    for estado in estados:
+        transiciones_nfa[estado] = {}
+        for simbolo in alfabeto:
+            destinos = input(f"Desde [{estado}] con el símbolo '{simbolo}' va hacia -> ").strip()
+            if destinos:  # Si el usuario escribió algo (no está vacío)
+                # Separar por comas y limpiar espacios
+                lista_destinos = [d.strip() for d in destinos.split(",")]
+                transiciones_nfa[estado][simbolo] = lista_destinos
+
+    return transiciones_nfa, estado_inicial, estados_aceptacion
+
+
 # === EJECUCIÓN DEL PROGRAMA ===
 if __name__ == "__main__":
-    transiciones_nfa_trampa = {
-        'q0': {'0': ['q0', 'q1'], '1': ['q3']},
-        'q1': {'1': ['q2']},
-        'q2': {'0': ['q2'], '1': ['q2']},
-        'q3': {'0': ['q3'], '1': ['q3']}
-    }
+    # 1. Llamamos al constructor interactivo
+    transiciones, inicial, aceptacion = construir_automata_interactivo()
 
-    programa = AutomataVisualizer(transiciones_nfa_trampa, 'q0', ['q2'])
+    print("\n" + "=" * 50)
+    print(" 🚀 INICIANDO CONVERSIÓN Y ANÁLISIS 🚀 ")
+    print("=" * 50 + "\n")
+
+    # 2. Le pasamos los datos ingresados a nuestra clase principal
+    programa = AutomataVisualizer(transiciones, inicial, aceptacion)
+
+    # 3. Ejecutamos los 5 pasos
     programa.mostrar_tabla_original()
     programa.calcular_nuevos_estados()
     programa.cambio_de_variable()
-    programa.pintar_automata('automata_con_trampa')
+    programa.pintar_automata('automata_inicial')
     programa.evaluar_y_limpiar_caminos()
 
-    # --- PRUEBAS DE CADENAS PARA EL PROFESOR ---
-    # 1. Una cadena válida que debería llegar a 'D' (Aceptada)
-    programa.evaluar_cadena("01")
-
-    # 2. Una cadena válida más larga que se queda ciclando en la aceptación (Aceptada)
-    programa.evaluar_cadena("01010")
-
-    # 3. Una cadena que intenta ir por la ruta eliminada (Rechazada)
-    programa.evaluar_cadena("10")
-
-    # 4. Una cadena que se queda a la mitad (Rechazada)
-    programa.evaluar_cadena("0")
+    # 4. Módulo de evaluación de cadenas iterativo
+    print("=" * 50)
+    print(" 🔍 EVALUADOR DE CADENAS 🔍 ")
+    print("=" * 50)
+    while True:
+        cadena_prueba = input("\nIngrese una cadena para evaluar (o escriba 'salir' para terminar): ").strip()
+        if cadena_prueba.lower() == 'salir':
+            print("¡Gracias por usar el programa! Cerrando...")
+            break
+        programa.evaluar_cadena(cadena_prueba)
